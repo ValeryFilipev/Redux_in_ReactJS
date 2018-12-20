@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore, combineReducers } from 'redux';
-import { Provider } from 'react-redux';
+import {combineReducers, createStore, applyMiddleware} from 'redux';
+import {Provider} from 'react-redux';
 
 import './index.css';
 import App from './App';
@@ -14,7 +14,15 @@ const rootReducers = combineReducers({
   res: resultReducer
 });
 
-const store = createStore(rootReducers);
+const logger = store => {
+  return next => {
+    return action => {
+      return next(action);
+    }
+  }
+};
+
+const store = createStore(rootReducers, applyMiddleware(logger));
 
 ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('root'));
 registerServiceWorker();
